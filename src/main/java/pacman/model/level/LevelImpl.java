@@ -91,7 +91,10 @@ public class LevelImpl implements Level {
     }
 
     @Override
-    public void tick() {
+    public void tick() { // the bees knees right here
+        for (Ghost ghost : this.ghosts){
+            ghost.updatePlayerPosition(player.getPosition());
+        }
         if (tickCount == modeLengths.get(currentGhostMode)) {
 
             // update ghost mode
@@ -197,5 +200,10 @@ public class LevelImpl implements Level {
     @Override
     public void collect(Collectable collectable) {
 
+    }
+
+    @Override
+    public Controllable getControllable(){
+        return this.player;
     }
 }

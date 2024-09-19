@@ -83,9 +83,12 @@ public class Maze {
 
         Set<Direction> possibleDirections = new HashSet<>();
 
+        // turning buffer
+        double buffer = 2.0;
+
         // calculates whether entity is in a position where it is able to turn
-        if (Math.abs(getCenterOfTile(xTile) - dynamicEntity.getCenter().getX()) < MAX_CENTER_DISTANCE &&
-                Math.abs(getCenterOfTile(yTile) - dynamicEntity.getCenter().getY()) < MAX_CENTER_DISTANCE){
+        if (Math.abs(getCenterOfTile(xTile) - dynamicEntity.getCenter().getX()) < MAX_CENTER_DISTANCE + buffer &&
+                Math.abs(getCenterOfTile(yTile) - dynamicEntity.getCenter().getY()) < MAX_CENTER_DISTANCE + buffer){
 
             String aboveCoordinates = formatCoordinates(xTile, yTile - 1);
             if (isWall.get(aboveCoordinates) == null){

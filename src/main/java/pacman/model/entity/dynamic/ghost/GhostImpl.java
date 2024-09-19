@@ -59,9 +59,11 @@ public class GhostImpl implements Ghost {
         // Ghosts update their target location when they reach an intersection
         if (Maze.isAtIntersection(this.possibleDirections)) {
             this.targetLocation = getTargetLocation();
-        }
 
+        }
         this.currentDirection = selectDirection(possibleDirections);
+
+
 
         switch (currentDirection) {
             case LEFT -> this.kinematicState.left();
@@ -69,12 +71,14 @@ public class GhostImpl implements Ghost {
             case UP -> this.kinematicState.up();
             case DOWN -> this.kinematicState.down();
         }
+
+
     }
 
     private Vector2D getTargetLocation() {
         return switch (this.ghostMode) {
-            // how does Ghost get the Player's position ??
-            case CHASE -> this.playerPosition;
+
+            case CHASE -> this.startingPosition;
             case SCATTER -> this.targetCorner;
         };
     }
@@ -172,4 +176,10 @@ public class GhostImpl implements Ghost {
     public Vector2D getCenter() {
         return new Vector2D(boundingBox.getMiddleX(), boundingBox.getMiddleY());
     }
+
+    public void updatePlayerPosition(Vector2D playerPosition) {
+        this.playerPosition = playerPosition;
+    }
+
+
 }

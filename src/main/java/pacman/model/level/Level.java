@@ -1,6 +1,7 @@
 package pacman.model.level;
 
 import pacman.model.entity.Renderable;
+import pacman.model.entity.dynamic.player.Controllable;
 import pacman.model.entity.staticentity.collectable.Collectable;
 
 import java.util.List;
@@ -83,4 +84,10 @@ public interface Level {
      * Level will remove all dynamic entities from game.
      */
     void handleGameEnd();
+
+    /**
+     * Gets the controllable (the player)
+     * @return the pacman object
+     */
+    Controllable getControllable();
 }

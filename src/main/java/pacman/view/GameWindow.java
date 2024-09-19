@@ -37,11 +37,14 @@ public class GameWindow {
 
         entityViews = new ArrayList<>();
 
-        KeyboardInputHandler keyboardInputHandler = new KeyboardInputHandler();
+        // previously was: KeyboardInputHandler keyboardInputHandler = new KeyboardInputHandler(this.model);
+        KeyboardInputHandler keyboardInputHandler = this.model.getKeyboard();
         scene.setOnKeyPressed(keyboardInputHandler::handlePressed);
 
         BackgroundDrawer backgroundDrawer = new StandardBackgroundDrawer();
         backgroundDrawer.draw(model, pane);
+
+
     }
 
     public Scene getScene() {

@@ -1,13 +1,15 @@
 package pacman.model.engine;
 
+import javafx.scene.input.KeyCode;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import pacman.model.entity.Renderable;
+import pacman.model.entity.dynamic.player.Controllable;
 import pacman.model.level.Level;
 import pacman.model.level.LevelImpl;
 import pacman.model.maze.Maze;
 import pacman.model.maze.MazeCreator;
-
+import pacman.view.keyboard.*;
 import java.util.List;
 
 /**
@@ -20,11 +22,13 @@ public class GameEngineImpl implements GameEngine {
     private final int currentLevelNo;
     private Maze maze;
     private JSONArray levelConfigs;
+    private KeyboardInputHandler keyboardInputHandler;
 
     public GameEngineImpl(String configPath) {
         this.currentLevelNo = 0;
 
         init(new GameConfigurationReader(configPath));
+        this.keyboardInputHandler = new KeyboardInputHandler(this);
     }
 
     private void init(GameConfigurationReader gameConfigurationReader) {
@@ -41,6 +45,13 @@ public class GameEngineImpl implements GameEngine {
             System.exit(0);
         }
     }
+
+    @Override
+    public KeyboardInputHandler getKeyboard(){
+        return this.keyboardInputHandler;
+    }
+
+
 
     @Override
     public List<Renderable> getRenderables() {
@@ -77,12 +88,28 @@ public class GameEngineImpl implements GameEngine {
         // reset renderables to starting state
         maze.reset();
         this.currentLevel = new LevelImpl(levelConfig, maze);
+        loadCommands();
     }
 
     @Override
     public void tick() {
         currentLevel.tick();
     }
+
+    @Override
+    public Controllable getPlayer(){
+        return this.currentLevel.getControllable();
+    }
+
+    @Override
+    public void loadCommands(){
+
+        keyboardInputHandler.setCommand(KeyCode.LEFT, new LeftCommand(this));
+        keyboardInputHandler.setCommand(KeyCode.RIGHT, new RightCommand(this));
+        keyboardInputHandler.setCommand(KeyCode.UP, new UpCommand(this));
+        keyboardInputHandler.setCommand(KeyCode.DOWN, new DownCommand(this));
+    }
+
 
 }
 

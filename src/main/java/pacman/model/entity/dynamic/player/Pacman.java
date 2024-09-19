@@ -19,6 +19,7 @@ public class Pacman implements Controllable {
     private Image currentImage;
     private Set<Direction> possibleDirections;
     private boolean isClosedImage;
+    private Direction queuedDirection = null; // this is gonna store the queued direction player wants to go
 
     public Pacman(
             Image currentImage,
@@ -62,6 +63,53 @@ public class Pacman implements Controllable {
     public void update() {
         kinematicState.update();
         this.boundingBox.setTopLeft(this.kinematicState.getPosition());
+
+        if (queuedDirection != null) {
+            System.out.println("Trying to go " + queuedDirection.name());
+            if (possibleDirections.contains(queuedDirection)){
+                System.out.println("POSSIBLE - " + queuedDirection);
+                switch (queuedDirection) {
+                    case UP:
+                        this.up();
+                        break;
+                    case DOWN:
+                        this.down();
+                        break;
+                    case RIGHT:
+                        this.right();
+                        break;
+                    case LEFT:
+                        this.left();
+                        break;
+                }
+                queuedDirection = null;
+            } else {
+                System.out.println("NOT POSSIBLE");
+            }
+        }
+
+//        if ((queuedDirection != null) && possibleDirections.contains(queuedDirection)){
+//            System.out.println("going: " + queuedDirection + " - POSSIBLE");
+//            switch (queuedDirection) {
+//                case UP:
+//                    this.up();
+//                    break;
+//                case DOWN:
+//                    this.down();
+//                    break;
+//                case RIGHT:
+//                    this.right();
+//                    break;
+//                case LEFT:
+//                    this.left();
+//                    break;
+//            }
+//            queuedDirection = null;
+//        }
+    }
+
+    public void setQueuedDirection(Direction direction){
+        this.queuedDirection = direction;
     }
 
     @Override
@@ -73,24 +121,28 @@ public class Pacman implements Controllable {
     public void up() {
         this.kinematicState.up();
         this.currentImage = images.get(PacmanVisual.UP);
+        snapToGrid();
     }
 
     @Override
     public void down() {
         this.kinematicState.down();
         this.currentImage = images.get(PacmanVisual.DOWN);
+        snapToGrid();
     }
 
     @Override
     public void left() {
         this.kinematicState.left();
         this.currentImage = images.get(PacmanVisual.LEFT);
+        snapToGrid();
     }
 
     @Override
     public void right() {
         this.kinematicState.right();
         this.currentImage = images.get(PacmanVisual.RIGHT);
+        snapToGrid();
     }
 
     @Override
@@ -156,5 +208,14 @@ public class Pacman implements Controllable {
     @Override
     public void switchImage(){
         this.isClosedImage = !this.isClosedImage;
+    }
+
+    private void snapToGrid(){
+        double gridSize = 16.0;
+        Vector2D currentPos = this.kinematicState.getPosition();
+
+        double snappedX = Math.round(currentPos.getX() / gridSize) * gridSize;
+        double snappedY = Math.round(currentPos.getY() / gridSize) * gridSize;
+        this.kinematicState.setPosition(new Vector2D(snappedX, snappedY));
     }
 }

@@ -1,6 +1,9 @@
 package pacman.model.engine;
 
 import pacman.model.entity.Renderable;
+import pacman.model.entity.dynamic.player.Controllable;
+import pacman.view.keyboard.KeyboardInputHandler;
+
 import java.util.List;
 
 
@@ -46,4 +49,12 @@ public interface GameEngine {
      * Instruct the model to progress forward in time by one increment.
      */
     void tick();
+
+
+    Controllable getPlayer();
+
+    KeyboardInputHandler getKeyboard();
+
+    void loadCommands();
+
 }
