@@ -7,6 +7,7 @@ import pacman.model.entity.dynamic.DynamicEntity;
 import pacman.model.entity.dynamic.ghost.Ghost;
 import pacman.model.entity.dynamic.ghost.GhostMode;
 import pacman.model.entity.dynamic.physics.PhysicsEngine;
+import pacman.model.entity.dynamic.physics.Vector2D;
 import pacman.model.entity.dynamic.player.Controllable;
 import pacman.model.entity.dynamic.player.Pacman;
 import pacman.model.entity.staticentity.StaticEntity;
@@ -95,10 +96,11 @@ public class LevelImpl implements Level {
         for (Ghost ghost : this.ghosts){
             ghost.updatePlayerPosition(player.getPosition());
         }
-        if (tickCount == modeLengths.get(currentGhostMode)) {
+        if (tickCount == modeLengths.get(currentGhostMode) ) {
 
             // update ghost mode
             this.currentGhostMode = GhostMode.getNextGhostMode(currentGhostMode);
+            System.out.println("updating ghosts after: " + tickCount);
             for (Ghost ghost : this.ghosts) {
                 ghost.setGhostMode(this.currentGhostMode);
             }
@@ -108,6 +110,16 @@ public class LevelImpl implements Level {
 
         if (tickCount % Pacman.PACMAN_IMAGE_SWAP_TICK_COUNT == 0) {
             this.player.switchImage();
+        }
+
+        if (tickCount % 90 == 0){
+            for (Ghost ghost : this.ghosts){
+                System.out.println(this.currentGhostMode + " - "+ ghost.getTargetLocation());
+                Vector2D topLeftCorner = new Vector2D(16, 48);
+                if (ghost.getId() == 1) {
+                    System.out.println("DUMB GHOST: " + ghost.getDirection());
+                }
+            }
         }
 
         // Update the dynamic entities

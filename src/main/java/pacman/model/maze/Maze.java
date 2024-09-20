@@ -27,6 +27,8 @@ public class Maze {
         this.isWall = new HashMap<>();
     }
 
+
+
     /**
      * Adds the renderable to maze
      * @param renderable renderable to be added

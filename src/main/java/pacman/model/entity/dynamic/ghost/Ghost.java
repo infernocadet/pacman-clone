@@ -23,4 +23,8 @@ public interface Ghost extends DynamicEntity {
     void setGhostMode(GhostMode ghostMode);
 
     void updatePlayerPosition(Vector2D playerPosition);
+
+    Vector2D getTargetLocation();
+
+    int getId();
 }

@@ -5,6 +5,7 @@ import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.physics.*;
 import pacman.model.level.Level;
 import pacman.model.maze.Maze;
+import pacman.model.maze.RenderableType;
 
 import java.util.*;
 
@@ -25,8 +26,9 @@ public class GhostImpl implements Ghost {
     private Set<Direction> possibleDirections;
     private Vector2D playerPosition;
     private Map<GhostMode, Double> speeds;
+    private final int id;
 
-    public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, Direction currentDirection) {
+    public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, Direction currentDirection, int id) {
         this.image = image;
         this.boundingBox = boundingBox;
         this.kinematicState = kinematicState;
@@ -36,6 +38,11 @@ public class GhostImpl implements Ghost {
         this.possibleDirections = new HashSet<>();
         this.targetCorner = targetCorner;
         this.targetLocation = getTargetLocation();
+        this.id = id;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     @Override
@@ -53,17 +60,16 @@ public class GhostImpl implements Ghost {
         this.updateDirection();
         this.kinematicState.update();
         this.boundingBox.setTopLeft(this.kinematicState.getPosition());
+
     }
 
     private void updateDirection() {
         // Ghosts update their target location when they reach an intersection
         if (Maze.isAtIntersection(this.possibleDirections)) {
             this.targetLocation = getTargetLocation();
-
         }
+
         this.currentDirection = selectDirection(possibleDirections);
-
-
 
         switch (currentDirection) {
             case LEFT -> this.kinematicState.left();
@@ -71,14 +77,13 @@ public class GhostImpl implements Ghost {
             case UP -> this.kinematicState.up();
             case DOWN -> this.kinematicState.down();
         }
-
-
     }
 
-    private Vector2D getTargetLocation() {
+
+    public Vector2D getTargetLocation() {
         return switch (this.ghostMode) {
 
-            case CHASE -> this.startingPosition;
+            case CHASE -> this.playerPosition;
             case SCATTER -> this.targetCorner;
         };
     }

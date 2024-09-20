@@ -8,7 +8,7 @@ public class BoundingBoxImpl implements BoundingBox {
     private final double width;
     private final double height;
     private Vector2D topLeft;
-    public static final int COLLISION_OFFSET = 4;
+    public static final int COLLISION_OFFSET = 2;
 
     public BoundingBoxImpl(
             Vector2D topLeft,

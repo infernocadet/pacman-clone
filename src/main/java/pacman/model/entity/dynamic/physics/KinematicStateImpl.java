@@ -45,6 +45,7 @@ public class KinematicStateImpl implements KinematicState {
     }
 
     private Vector2D createVelocityVector(Direction direction) {
+        if (direction == null) return Vector2D.ZERO;
         return switch (direction) {
             case LEFT -> new Vector2D(-speed, 0);
             case RIGHT -> new Vector2D(speed, 0);
@@ -100,7 +101,7 @@ public class KinematicStateImpl implements KinematicState {
     public static class KinematicStateBuilder {
         private Vector2D position = Vector2D.ZERO;
         private double speed = 0;
-        private Direction direction = Direction.LEFT;
+        private Direction direction = null;
 
         public KinematicStateBuilder setPosition(Vector2D position) {
             this.position = position;
