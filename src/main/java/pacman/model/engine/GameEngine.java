@@ -3,6 +3,7 @@ package pacman.model.engine;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.player.Controllable;
 import pacman.view.keyboard.KeyboardInputHandler;
+import pacman.view.observers.GameSubject;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * The base interface for interacting with the Pac-Man model
  */
-public interface GameEngine {
+public interface GameEngine extends GameSubject {
 
     /**
      * Gets the list of renderables in the game
@@ -56,5 +57,7 @@ public interface GameEngine {
     KeyboardInputHandler getKeyboard();
 
     void loadCommands();
+
+    void updateScore(int score);
 
 }

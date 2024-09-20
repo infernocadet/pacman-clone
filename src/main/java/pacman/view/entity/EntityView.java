@@ -1,6 +1,7 @@
 package pacman.view.entity;
 
 import javafx.scene.Node;
+import javafx.scene.shape.Rectangle;
 import pacman.model.entity.Renderable;
 
 /**
@@ -36,4 +37,6 @@ public interface EntityView {
      * @return true, if entity view has been marked for deletion
      */
     boolean isMarkedForDelete();
+
+//    public Rectangle getBoundingBoxNode();
 }

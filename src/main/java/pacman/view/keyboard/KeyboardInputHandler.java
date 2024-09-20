@@ -3,11 +3,9 @@ package pacman.view.keyboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import pacman.model.engine.GameEngine;
-import pacman.model.entity.dynamic.player.Controllable;
-import pacman.model.entity.dynamic.player.Pacman;
+import pacman.view.Commands.Command;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

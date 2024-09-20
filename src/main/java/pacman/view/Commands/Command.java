@@ -1,4 +1,4 @@
-package pacman.view.keyboard;
+package pacman.view.Commands;
 
 public interface Command {
     void execute();

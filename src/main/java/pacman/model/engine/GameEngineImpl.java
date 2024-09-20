@@ -9,7 +9,15 @@ import pacman.model.level.Level;
 import pacman.model.level.LevelImpl;
 import pacman.model.maze.Maze;
 import pacman.model.maze.MazeCreator;
+import pacman.view.Commands.DownCommand;
+import pacman.view.Commands.LeftCommand;
+import pacman.view.Commands.RightCommand;
+import pacman.view.Commands.UpCommand;
 import pacman.view.keyboard.*;
+import pacman.view.observers.GameObserver;
+import pacman.view.observers.GameSubject;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,9 +31,13 @@ public class GameEngineImpl implements GameEngine {
     private Maze maze;
     private JSONArray levelConfigs;
     private KeyboardInputHandler keyboardInputHandler;
+    private int gameScore;
+    private List<GameObserver> observers;
 
     public GameEngineImpl(String configPath) {
         this.currentLevelNo = 0;
+        this.gameScore = 0;
+        this.observers = new ArrayList<>();
 
         init(new GameConfigurationReader(configPath));
         this.keyboardInputHandler = new KeyboardInputHandler(this);
@@ -87,7 +99,7 @@ public class GameEngineImpl implements GameEngine {
         JSONObject levelConfig = (JSONObject) levelConfigs.get(currentLevelNo);
         // reset renderables to starting state
         maze.reset();
-        this.currentLevel = new LevelImpl(levelConfig, maze);
+        this.currentLevel = new LevelImpl(levelConfig, maze, this);
         loadCommands();
     }
 
@@ -108,6 +120,34 @@ public class GameEngineImpl implements GameEngine {
         keyboardInputHandler.setCommand(KeyCode.RIGHT, new RightCommand(this));
         keyboardInputHandler.setCommand(KeyCode.UP, new UpCommand(this));
         keyboardInputHandler.setCommand(KeyCode.DOWN, new DownCommand(this));
+    }
+
+    @Override
+    public void updateScore(int score){
+        this.gameScore += score;
+        System.out.println("Score updated: " + gameScore);
+        notifyUpdateScore();
+    }
+
+    public int getScore(){
+        return this.gameScore;
+    }
+
+    @Override
+    public void addObserver(GameObserver observer){
+        this.observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(GameObserver observer){
+        this.observers.remove(observer);
+    }
+
+    @Override
+    public void notifyUpdateScore(){
+        for (GameObserver observer : observers) {
+            observer.updateScore(gameScore);
+        }
     }
 
 

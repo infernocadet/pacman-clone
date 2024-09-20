@@ -3,7 +3,11 @@ package pacman.view.entity;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import pacman.model.entity.Renderable;
+
+
 
 /**
  * Concrete implementation of EntityView
@@ -13,6 +17,7 @@ public class EntityViewImpl implements EntityView {
     private boolean delete = false;
     private final ImageView node;
     private final HBox box;
+//    private final Rectangle boundingBox;
 
     public EntityViewImpl(Renderable entity) {
         this.entity = entity;
@@ -21,6 +26,16 @@ public class EntityViewImpl implements EntityView {
         box.getChildren().add(node);
         box.setViewOrder(getViewOrder(entity.getLayer()));
         box.setFillHeight(true);
+        // this was to visualise the entity space / bounding boxes
+//        boundingBox = new Rectangle(
+//                (int) entity.getBoundingBox().getLeftX(),
+//                (int) entity.getBoundingBox().getTopY(),
+//                (int) entity.getBoundingBox().getWidth(),
+//                (int) entity.getBoundingBox().getHeight()
+//        );
+//        boundingBox.setStroke(Color.RED);
+//        boundingBox.setFill(null);
+
         update();
     }
 
@@ -45,6 +60,11 @@ public class EntityViewImpl implements EntityView {
             node.setFitHeight(entity.getHeight());
             node.setFitWidth(entity.getWidth());
             node.setPreserveRatio(true);
+
+//            boundingBox.setX(entity.getBoundingBox().getLeftX());
+//            boundingBox.setY(entity.getBoundingBox().getTopY());
+//            boundingBox.setWidth(entity.getBoundingBox().getWidth());
+//            boundingBox.setHeight(entity.getBoundingBox().getHeight());
         } else {
             node.setVisible(false);
         }
@@ -71,5 +91,10 @@ public class EntityViewImpl implements EntityView {
     public boolean isMarkedForDelete() {
         return delete;
     }
+
+//    @Override
+//    public Rectangle getBoundingBoxNode() {
+//        return boundingBox;
+//    }
 }
 

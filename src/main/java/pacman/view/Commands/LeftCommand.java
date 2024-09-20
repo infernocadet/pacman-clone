@@ -1,11 +1,10 @@
-package pacman.view.keyboard;
+package pacman.view.Commands;
 
 import pacman.model.engine.GameEngine;
 import pacman.model.entity.dynamic.physics.Direction;
 import pacman.model.entity.dynamic.player.Controllable;
-import pacman.model.entity.dynamic.player.Pacman;
 
-public class LeftCommand implements Command{
+public class LeftCommand implements Command {
 
     private final GameEngine model;
     private final Controllable pacman;

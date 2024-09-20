@@ -37,35 +37,29 @@ public class GhostFactory implements RenderableFactory{
     public Renderable createRenderable(char renderableType, int x, int y) {
         double width = this.ghostImage.getWidth();
         double height = this.ghostImage.getHeight();
-        Direction direction = null;
         Vector2D position = new Vector2D(x * 16 , y * 16);
-        BoundingBox boundingBox = new BoundingBoxImpl(position, 22, 22);
+        BoundingBox boundingBox = new BoundingBoxImpl(position, 24, 24);
         double speed = 1.0; // initial
-        switch(random.nextInt(4)) {
-            case 0:
-                direction = Direction.RIGHT;
-                break;
-            case 1:
-                direction = Direction.LEFT;
-                break;
-            case 2:
-                direction = Direction.UP;
-                break;
-            case 3:
-                direction = Direction.DOWN;
-                break;
-        }
+        Vector2D targetCorner = targetCorners.get(this.cornerIndex);
+        cornerIndex++;
+        Direction direction = calculateInitialDirection(position, targetCorner);
 
         KinematicState kinematicState = new KinematicStateImpl.KinematicStateBuilder()
                 .setPosition(position)
                 .setSpeed(speed)
                 .setDirection(direction)
                 .build();
-        Vector2D targetCorner = targetCorners.get(this.cornerIndex);
-        cornerIndex++;
-        ghostId++;
+
         System.out.println("Ghost " + ghostId + " is targeting corner: " + targetCorner);
         return new GhostImpl(this.ghostImage, boundingBox, kinematicState,
-                GhostMode.SCATTER, targetCorner, kinematicState.getDirection(), ghostId);
+                GhostMode.SCATTER, targetCorner, kinematicState.getDirection(), ghostId++);
+    }
+
+    private Direction calculateInitialDirection(Vector2D startPosition, Vector2D targetCorner){
+        if (Math.abs(startPosition.getX() - targetCorner.getX()) > Math.abs(startPosition.getY() - targetCorner.getY())) {
+            return startPosition.getX() > targetCorner.getX() ? Direction.LEFT : Direction.RIGHT;
+        } else {
+            return startPosition.getY() > targetCorner.getY() ? Direction.UP : Direction.DOWN;
+        }
     }
 }

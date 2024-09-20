@@ -2,6 +2,8 @@ package pacman.model.level;
 
 import org.json.simple.JSONObject;
 import pacman.ConfigurationParseException;
+import pacman.model.engine.GameEngine;
+import pacman.model.engine.GameEngineImpl;
 import pacman.model.entity.Renderable;
 import pacman.model.entity.dynamic.DynamicEntity;
 import pacman.model.entity.dynamic.ghost.Ghost;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  */
 public class LevelImpl implements Level {
 
+    private final GameEngine model;
     private static final int START_LEVEL_TIME = 200;
     private final Maze maze;
     private List<Renderable> renderables;
@@ -35,14 +38,17 @@ public class LevelImpl implements Level {
     private int numLives;
     private List<Renderable> collectables;
     private GhostMode currentGhostMode;
+    private int score;
 
     public LevelImpl(JSONObject levelConfiguration,
-                     Maze maze) {
+                     Maze maze, GameEngineImpl model) {
+        this.model = model;
         this.renderables = new ArrayList<>();
         this.maze = maze;
         this.tickCount = 0;
         this.modeLengths = new HashMap<>();
         this.currentGhostMode = GhostMode.SCATTER;
+        this.score = 0;
 
         initLevel(new LevelConfigurationReader(levelConfiguration));
     }
@@ -112,15 +118,6 @@ public class LevelImpl implements Level {
             this.player.switchImage();
         }
 
-        if (tickCount % 90 == 0){
-            for (Ghost ghost : this.ghosts){
-                System.out.println(this.currentGhostMode + " - "+ ghost.getTargetLocation());
-                Vector2D topLeftCorner = new Vector2D(16, 48);
-                if (ghost.getId() == 1) {
-                    System.out.println("DUMB GHOST: " + ghost.getDirection());
-                }
-            }
-        }
 
         // Update the dynamic entities
         List<DynamicEntity> dynamicEntities = getDynamicEntities();
@@ -211,6 +208,7 @@ public class LevelImpl implements Level {
 
     @Override
     public void collect(Collectable collectable) {
+        model.updateScore(collectable.getPoints());
 
     }
 

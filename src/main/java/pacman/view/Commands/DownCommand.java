@@ -1,10 +1,10 @@
-package pacman.view.keyboard;
+package pacman.view.Commands;
 
 import pacman.model.engine.GameEngine;
 import pacman.model.entity.dynamic.physics.Direction;
 import pacman.model.entity.dynamic.player.Controllable;
 
-public class DownCommand implements Command{
+public class DownCommand implements Command {
 
     private final GameEngine model;
     private final Controllable pacman;
