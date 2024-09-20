@@ -38,7 +38,7 @@ public class GhostFactory implements RenderableFactory{
         double width = this.ghostImage.getWidth();
         double height = this.ghostImage.getHeight();
         Vector2D position = new Vector2D(x * 16 , y * 16);
-        BoundingBox boundingBox = new BoundingBoxImpl(position, 24, 24);
+        BoundingBox boundingBox = new BoundingBoxImpl(position, 26, 26);
         double speed = 1.0; // initial
         Vector2D targetCorner = targetCorners.get(this.cornerIndex);
         cornerIndex++;
@@ -58,8 +58,11 @@ public class GhostFactory implements RenderableFactory{
     private Direction calculateInitialDirection(Vector2D startPosition, Vector2D targetCorner){
         if (Math.abs(startPosition.getX() - targetCorner.getX()) > Math.abs(startPosition.getY() - targetCorner.getY())) {
             return startPosition.getX() > targetCorner.getX() ? Direction.LEFT : Direction.RIGHT;
-        } else {
+        } else if (Math.abs(startPosition.getX() - targetCorner.getX()) < Math.abs(startPosition.getY() - targetCorner.getY())) {
             return startPosition.getY() > targetCorner.getY() ? Direction.UP : Direction.DOWN;
+        } else {
+            // Fallback direction if for some reason it's not clear
+            return Direction.RIGHT;
         }
     }
 }

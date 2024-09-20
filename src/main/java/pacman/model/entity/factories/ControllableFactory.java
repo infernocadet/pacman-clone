@@ -32,7 +32,7 @@ public class ControllableFactory implements RenderableFactory{
         double speed = 1.0;
         Direction direction = Direction.LEFT;
         
-        BoundingBox boundingBox = new BoundingBoxImpl(position, 22, 22);
+        BoundingBox boundingBox = new BoundingBoxImpl(position, height, width);
         KinematicState kinematicState = new KinematicStateImpl.KinematicStateBuilder()
                 .setPosition(position)
                 .setSpeed(speed)

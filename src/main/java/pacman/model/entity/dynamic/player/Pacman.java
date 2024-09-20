@@ -157,6 +157,7 @@ public class Pacman implements Controllable {
             level.collect(collectable);
             collectable.collect();
         }
+//        if (level.)
     }
 
     @Override

@@ -90,4 +90,11 @@ public interface Level {
      * @return the pacman object
      */
     Controllable getControllable();
+
+    /**
+     * Checks if the given renderable is a Ghost for the level
+     * @param renderable
+     * @return true if renderable is a ghost
+     */
+    boolean isGhost(Renderable renderable);
 }
