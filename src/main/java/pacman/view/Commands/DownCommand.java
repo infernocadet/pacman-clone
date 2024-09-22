@@ -16,6 +16,5 @@ public class DownCommand implements Command {
 
     public void execute(){
         this.pacman.setQueuedDirection(Direction.DOWN);
-        System.out.println("pressing down");
     }
 }

@@ -28,11 +28,11 @@ public class ControllableFactory implements RenderableFactory{
         double width = pacmanDefault.getWidth();
         double height = pacmanDefault.getHeight();
         
-        Vector2D position = new Vector2D(x * 16, y * 16);
+        Vector2D position = new Vector2D(x * 16 + 4, y * 16 - 2);
         double speed = 1.0;
         Direction direction = Direction.LEFT;
         
-        BoundingBox boundingBox = new BoundingBoxImpl(position, height, width);
+        BoundingBox boundingBox = new BoundingBoxImpl(position, 24, 24);
         KinematicState kinematicState = new KinematicStateImpl.KinematicStateBuilder()
                 .setPosition(position)
                 .setSpeed(speed)

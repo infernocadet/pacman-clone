@@ -97,4 +97,6 @@ public interface Level {
      * @return true if renderable is a ghost
      */
     boolean isGhost(Renderable renderable);
+
+    void handleLevelFinish();
 }

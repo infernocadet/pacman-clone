@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class GhostImpl implements Ghost {
 
-    private final Layer layer = Layer.FOREGROUND;
+    private Layer layer;
     private final Image image;
     private final BoundingBox boundingBox;
     private final Vector2D startingPosition;
@@ -23,18 +23,25 @@ public class GhostImpl implements Ghost {
     private GhostMode ghostMode;
     private Vector2D targetLocation;
     private Direction currentDirection;
+    private Direction startingDirection;
+    private double initialSpeed;
     private Set<Direction> possibleDirections;
     private Vector2D playerPosition;
     private Map<GhostMode, Double> speeds;
     private final int id;
+    private KinematicState startingKinematicState;
 
     public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, Direction currentDirection, int id) {
+        this.layer = Layer.FOREGROUND;
         this.image = image;
         this.boundingBox = boundingBox;
         this.kinematicState = kinematicState;
+        this.startingKinematicState = kinematicState.deepCopy();
         this.startingPosition = kinematicState.getPosition();
         this.ghostMode = ghostMode;
         this.currentDirection = currentDirection;
+        this.startingDirection = currentDirection;
+        this.initialSpeed = kinematicState.getSpeed();
         this.possibleDirections = new HashSet<>();
         this.targetCorner = targetCorner;
         this.targetLocation = getTargetLocation();
@@ -66,18 +73,23 @@ public class GhostImpl implements Ghost {
 
     private void updateDirection() {
         // Ghosts update their target location when they reach an intersection
-        if (Maze.isAtIntersection(this.possibleDirections)) {
+        if (this.currentDirection == null){
+            this.currentDirection = selectDirection(possibleDirections);
+        } else if (Maze.isAtIntersection(this.possibleDirections)) {
             this.targetLocation = getTargetLocation();
+            this.currentDirection = selectDirection(possibleDirections);
         }
 
-        Direction previousDirection = this.currentDirection;
-        this.currentDirection = selectDirection(possibleDirections);
 
         switch (currentDirection) {
             case LEFT -> this.kinematicState.left();
             case RIGHT -> this.kinematicState.right();
             case UP -> this.kinematicState.up();
             case DOWN -> this.kinematicState.down();
+        }
+
+        if (possibleDirections.isEmpty()){
+            System.out.println("is empty");
         }
 
 
@@ -97,16 +109,23 @@ public class GhostImpl implements Ghost {
         }
 
         Map<Direction, Double> distances = new HashMap<>();
+        Direction reverse = currentDirection.opposite();
 
+        // calculate distances for non-reverse directions
         for (Direction direction : possibleDirections) {
-            // ghosts never choose to reverse travel
-            if (direction != currentDirection.opposite()) {
-                distances.put(direction, Vector2D.calculateEuclideanDistance(this.kinematicState.getPotentialPosition(direction), this.targetLocation));
+            if (direction != reverse){ // aoviding reverse
+                distances.put(direction, Vector2D.calculateEuclideanDistance(
+                        this.kinematicState.getPotentialPosition(direction),
+                        this.targetLocation));
             }
         }
-
-        // select the direction that will reach the target location fastest
-        return Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
+        // if there are possible distances, select best one
+        if (!distances.isEmpty()){
+            return Collections.min(distances.entrySet(), Map.Entry.comparingByValue()).getKey();
+        }
+        // else let them reverse
+        System.out.println("nooo reversing");
+        return reverse;
     }
 
     @Override
@@ -117,13 +136,16 @@ public class GhostImpl implements Ghost {
 
     @Override
     public boolean collidesWith(Renderable renderable) {
+        if (kinematicState.getDirection() == null){
+            System.out.println("its null");
+        }
         return boundingBox.collidesWith(kinematicState.getDirection(), renderable.getBoundingBox());
     }
 
     @Override
     public void collideWith(Level level, Renderable renderable) {
         if (level.isPlayer(renderable)) {
-            level.handleLoseLife();
+            ; // do nothing cos pacamn handles this
         }
     }
 
@@ -165,9 +187,11 @@ public class GhostImpl implements Ghost {
     @Override
     public void reset() {
         // return ghost to starting position
-        this.kinematicState = new KinematicStateImpl.KinematicStateBuilder()
-                .setPosition(startingPosition)
-                .build();
+        this.kinematicState = startingKinematicState.deepCopy();
+        this.currentDirection = startingKinematicState.getDirection();
+
+        setGhostMode(GhostMode.SCATTER);
+        System.out.println(kinematicState.getDirection());
     }
 
     @Override
@@ -177,6 +201,9 @@ public class GhostImpl implements Ghost {
 
     @Override
     public Direction getDirection() {
+        if (this.kinematicState.getDirection() == null){
+            return Direction.RIGHT;
+        }
         return this.kinematicState.getDirection();
     }
 
@@ -189,5 +216,16 @@ public class GhostImpl implements Ghost {
         this.playerPosition = playerPosition;
     }
 
+    public void setLayer(Layer layer){
+        this.layer = layer;
+    }
+
+    private Direction calculateInitialDirection(){
+        if (this.kinematicState.getPosition().getX() > this.targetCorner.getX()){
+            return Direction.LEFT;
+        } else{
+            return Direction.RIGHT;
+        }
+    }
 
 }

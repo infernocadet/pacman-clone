@@ -16,6 +16,5 @@ public class LeftCommand implements Command {
 
     public void execute(){
         this.pacman.setQueuedDirection(Direction.LEFT);
-        System.out.println("pressing left");
     }
 }

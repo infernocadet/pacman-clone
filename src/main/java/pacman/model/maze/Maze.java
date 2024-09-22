@@ -47,7 +47,6 @@ public class Maze {
             } else {
                 this.isWall.put(formatCoordinates(x, y), true);
             }
-
             this.renderables.add(renderable);
         }
     }
@@ -86,7 +85,7 @@ public class Maze {
         Set<Direction> possibleDirections = new HashSet<>();
 
         // turning buffer
-        double buffer = 3.0;
+        double buffer = 2.0;
 
         // calculates whether entity is in a position where it is able to turn
         if (Math.abs(getCenterOfTile(xTile) - dynamicEntity.getCenter().getX()) < MAX_CENTER_DISTANCE + buffer &&
@@ -151,4 +150,20 @@ public class Maze {
             renderable.reset();
         }
     }
+
+    /**
+     * used for when pacman dies and we have the same level but want to reset pacman and ghosts
+     */
+    public void resetEntities(){
+        if (pacman != null){
+            pacman.reset();
+        }
+
+        for (Renderable ghost : ghosts){
+            ghost.reset();
+            updatePossibleDirections((DynamicEntity) ghost);
+        }
+
+    }
+
 }

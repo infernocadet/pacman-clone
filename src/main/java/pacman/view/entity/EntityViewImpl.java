@@ -42,7 +42,7 @@ public class EntityViewImpl implements EntityView {
     private static double getViewOrder(Renderable.Layer layer) {
         return switch (layer) {
             case BACKGROUND -> 100.0;
-            case FOREGROUND -> 100.0;
+            case FOREGROUND -> 50.0;
             case EFFECT -> 25.0;
             case INVISIBLE -> 0.0;
         };

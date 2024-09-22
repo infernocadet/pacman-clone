@@ -39,4 +39,6 @@ public interface Controllable extends DynamicEntity {
     void switchImage();
 
     void setQueuedDirection(Direction direction);
+
+    void setLayer(Layer layer);
 }

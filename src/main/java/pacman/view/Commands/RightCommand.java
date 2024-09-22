@@ -16,6 +16,5 @@ public class RightCommand implements Command {
 
     public void execute(){
         this.pacman.setQueuedDirection(Direction.RIGHT);
-        System.out.println("pressing right");
     }
 }

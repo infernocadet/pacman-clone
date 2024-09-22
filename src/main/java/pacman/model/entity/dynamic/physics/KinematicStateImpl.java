@@ -39,6 +39,11 @@ public class KinematicStateImpl implements KinematicState {
     }
 
     @Override
+    public void setDirection(Direction direction){
+        this.direction = direction;
+    }
+
+    @Override
     public void update() {
         this.previousPosition = position;
         this.position = this.position.add(this.velocity);
@@ -125,5 +130,13 @@ public class KinematicStateImpl implements KinematicState {
                     this.direction
             );
         }
+    }
+
+    public KinematicState deepCopy() {
+        return new KinematicStateImpl.KinematicStateBuilder()
+                .setPosition(new Vector2D(this.position.getX(), this.position.getY())) // Deep copy of position
+                .setSpeed(this.speed)
+                .setDirection(this.direction)
+                .build();
     }
 }

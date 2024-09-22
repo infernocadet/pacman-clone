@@ -38,6 +38,8 @@ public interface KinematicState {
      */
     double getSpeed();
 
+    void setDirection(Direction direction);
+
     /**
      * Updates the position of the Dynamic entity based on its direction and speed (velocity)
      */
@@ -68,5 +70,7 @@ public interface KinematicState {
      * @return direction of Dynamic entity
      */
     Direction getDirection();
+
+    KinematicState deepCopy();
 }
 

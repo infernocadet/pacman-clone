@@ -60,4 +60,8 @@ public interface GameEngine extends GameSubject {
 
     void updateScore(int score);
 
+    void updateLives();
+
+    void handleLevelComplete();
+
 }

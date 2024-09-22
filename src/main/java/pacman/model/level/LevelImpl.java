@@ -103,7 +103,7 @@ public class LevelImpl implements Level {
 
             // update ghost mode
             this.currentGhostMode = GhostMode.getNextGhostMode(currentGhostMode);
-            System.out.println("updating ghosts after: " + tickCount);
+            System.out.println("updated ghost mode");
             for (Ghost ghost : this.ghosts) {
                 ghost.setGhostMode(this.currentGhostMode);
             }
@@ -196,16 +196,26 @@ public class LevelImpl implements Level {
 
     @Override
     public void handleLoseLife() {
+        System.out.println("level handling lost life");
+        model.updateLives();
     }
 
     @Override
     public void handleGameEnd() {
-
+        for (Ghost ghost : ghosts){
+            ghost.setLayer(Renderable.Layer.INVISIBLE);
+        }
+        player.setLayer(Renderable.Layer.INVISIBLE);
+        player.setSpeed(0);
     }
 
     @Override
     public void collect(Collectable collectable) {
         model.updateScore(collectable.getPoints());
+        this.collectables.remove(collectable);
+        if (isLevelFinished()){
+            handleLevelFinish();
+        }
 
     }
 
@@ -217,5 +227,10 @@ public class LevelImpl implements Level {
     @Override
     public boolean isGhost(Renderable renderable){
         return this.ghosts.contains(renderable);
+    }
+
+    @Override
+    public void handleLevelFinish(){
+        model.handleLevelComplete();
     }
 }

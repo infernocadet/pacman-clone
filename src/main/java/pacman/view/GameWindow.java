@@ -3,6 +3,8 @@ package pacman.view;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -16,6 +18,9 @@ import pacman.view.entity.EntityViewImpl;
 import pacman.view.keyboard.KeyboardInputHandler;
 
 import javafx.scene.control.Label;
+import pacman.view.observers.GameObserver;
+import pacman.view.observers.GameStateView;
+import pacman.view.observers.LivesView;
 import pacman.view.observers.ScoreView;
 
 import java.io.File;
@@ -35,6 +40,7 @@ public class GameWindow {
     private final Pane pane;
     private final GameEngine model;
     private final List<EntityView> entityViews;
+    private final List<ImageView> lifeViews;
 
     public GameWindow(GameEngine model, int width, int height) {
         this.model = model;
@@ -42,9 +48,11 @@ public class GameWindow {
         pane = new Pane();
         scene = new Scene(pane, width, height);
 
-        Font font = Font.loadFont(getClass().getResourceAsStream("/maze/PressStart2P-Regular.ttf"), 20);
+        Font font = Font.loadFont(getClass().getResourceAsStream("/maze/PressStart2P-Regular.ttf"), 18);
+        Image lifeImage = new Image(getClass().getResourceAsStream("/maze/pacman/playerRight.png"));
 
         entityViews = new ArrayList<>();
+        lifeViews = new ArrayList<>();
 
         Label scoreLabel = new Label();
         scoreLabel.setLayoutX(10);
@@ -54,18 +62,23 @@ public class GameWindow {
 
         pane.getChildren().add(scoreLabel);
 
-        ScoreView scoreView = new ScoreView(scoreLabel);
+        GameObserver scoreView = new ScoreView(scoreLabel);
         model.addObserver(scoreView);
+        GameObserver livesView = new LivesView(pane, lifeImage);
+        model.addObserver(livesView);
+        GameObserver gameStateView = new GameStateView(pane, font);
+        model.addObserver(gameStateView);
+
+
+
 
         KeyboardInputHandler keyboardInputHandler = this.model.getKeyboard();
         scene.setOnKeyPressed(keyboardInputHandler::handlePressed);
 
         BackgroundDrawer backgroundDrawer = new StandardBackgroundDrawer();
         backgroundDrawer.draw(model, pane);
-
-
-
     }
+
 
     public Scene getScene() {
         return scene;

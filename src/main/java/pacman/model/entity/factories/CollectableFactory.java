@@ -27,7 +27,7 @@ public class CollectableFactory implements RenderableFactory{
         BoundingBox boundingBox = new BoundingBoxImpl(position, height, width);
 
         int points = 100; // default - change points surely later
-        Renderable.Layer layer = Renderable.Layer.FOREGROUND;
+        Renderable.Layer layer = Renderable.Layer.EFFECT;
         return new Pellet(boundingBox, layer, pelletImage, points);
     }
 }

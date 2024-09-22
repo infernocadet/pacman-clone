@@ -15,6 +15,5 @@ public class UpCommand implements Command {
     }
     public void execute(){
         this.pacman.setQueuedDirection(Direction.UP);
-        System.out.println("pressing up");
     }
 }

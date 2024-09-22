@@ -16,6 +16,7 @@ import pacman.view.Commands.UpCommand;
 import pacman.view.keyboard.*;
 import pacman.view.observers.GameObserver;
 import pacman.view.observers.GameSubject;
+import pacman.view.observers.ObserverType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +28,24 @@ public class GameEngineImpl implements GameEngine {
 
     private Level currentLevel;
     private int numLevels;
-    private final int currentLevelNo;
+    private int currentLevelNo;
     private Maze maze;
     private JSONArray levelConfigs;
     private KeyboardInputHandler keyboardInputHandler;
     private int gameScore;
     private List<GameObserver> observers;
+    private int livesLeft;
+
+    private GameState currentState;
+    private int readyFrameCounter;
+    private static final int READY_DURATION = 100; // 100 frames
 
     public GameEngineImpl(String configPath) {
         this.currentLevelNo = 0;
         this.gameScore = 0;
         this.observers = new ArrayList<>();
+        this.currentState = GameState.READY;
+        this.readyFrameCounter = 0;
 
         init(new GameConfigurationReader(configPath));
         this.keyboardInputHandler = new KeyboardInputHandler(this);
@@ -48,7 +56,9 @@ public class GameEngineImpl implements GameEngine {
         String mapFile = gameConfigurationReader.getMapFile();
         MazeCreator mazeCreator = new MazeCreator(mapFile);
         this.maze = mazeCreator.createMaze();
-        this.maze.setNumLives(gameConfigurationReader.getNumLives());
+        int initialLives = gameConfigurationReader.getNumLives();
+        this.maze.setNumLives(initialLives);
+        this.livesLeft = initialLives;
 
         // Get level configurations
         this.levelConfigs = gameConfigurationReader.getLevelConfigs();
@@ -92,20 +102,39 @@ public class GameEngineImpl implements GameEngine {
 
     @Override
     public void startGame() {
+
         startLevel();
     }
 
     private void startLevel() {
         JSONObject levelConfig = (JSONObject) levelConfigs.get(currentLevelNo);
         // reset renderables to starting state
-        maze.reset();
-        this.currentLevel = new LevelImpl(levelConfig, maze, this);
-        loadCommands();
+        if (currentLevelNo != 0) { // if it is next level
+            currentLevel.getControllable().reset();
+            this.currentLevel = new LevelImpl(levelConfig, maze, this);
+            this.currentLevel.getControllable().reset();
+            maze.reset();
+            notifyUpdateGameState(currentState);
+        } else { // if it is first level
+            this.currentLevel = new LevelImpl(levelConfig, maze, this);
+            this.currentLevel.getControllable().reset();
+            loadCommands();
+            notifyUpdateGameState(currentState);
+        }
+
     }
 
     @Override
     public void tick() {
-        currentLevel.tick();
+        if (currentState == GameState.READY) {
+            readyFrameCounter++;
+            if (readyFrameCounter >= READY_DURATION) {
+                currentState = GameState.PLAYING;
+                notifyUpdateGameState(currentState);
+            }
+        } else if (currentState == GameState.PLAYING) {
+            currentLevel.tick();
+        }
     }
 
     @Override
@@ -115,7 +144,6 @@ public class GameEngineImpl implements GameEngine {
 
     @Override
     public void loadCommands(){
-
         keyboardInputHandler.setCommand(KeyCode.LEFT, new LeftCommand(this));
         keyboardInputHandler.setCommand(KeyCode.RIGHT, new RightCommand(this));
         keyboardInputHandler.setCommand(KeyCode.UP, new UpCommand(this));
@@ -125,7 +153,6 @@ public class GameEngineImpl implements GameEngine {
     @Override
     public void updateScore(int score){
         this.gameScore += score;
-        System.out.println("Score updated: " + gameScore);
         notifyUpdateScore();
     }
 
@@ -146,10 +173,59 @@ public class GameEngineImpl implements GameEngine {
     @Override
     public void notifyUpdateScore(){
         for (GameObserver observer : observers) {
-            observer.updateScore(gameScore);
+            if (observer.getType() == ObserverType.SCORE) {
+                observer.updateScore(gameScore);
+            }
         }
     }
 
+    @Override
+    public void updateLives() {
+        System.out.println("before hit: " + livesLeft);
+        livesLeft--;
+        System.out.println("after hit: " + livesLeft);
+        notifyUpdateLives();
+        if (livesLeft < 1){
+            currentLevel.handleGameEnd(); // level is only responsible for making everything disappear. only game engine will initiate game ending
+            notifyUpdateGameState(GameState.GAME_OVER);
+        } else {
+            maze.resetEntities();
+            currentState = GameState.READY;
+            readyFrameCounter = 0;
+            notifyUpdateGameState(currentState);
+        }
+    }
 
+    @Override
+    public void notifyUpdateLives(){
+        for (GameObserver observer : observers) {
+            if (observer.getType() == ObserverType.LIVES){
+                observer.updateLives(livesLeft);
+            }
+        }
+    }
+
+    @Override
+    public void notifyUpdateGameState(GameState gameState){
+        for (GameObserver observer : observers){
+            if (observer.getType() == ObserverType.GAME_STATE) {
+                observer.updateGameState(gameState);
+            }
+        }
+    }
+
+    @Override
+    public void handleLevelComplete(){
+        currentLevelNo++;
+        if (currentLevelNo == numLevels){
+            currentLevel.handleGameEnd();
+            notifyUpdateGameState(GameState.VICTORY);
+        } else {
+            currentState = GameState.READY;
+            readyFrameCounter = 0;
+            startLevel();
+        }
+
+    }
 }
 

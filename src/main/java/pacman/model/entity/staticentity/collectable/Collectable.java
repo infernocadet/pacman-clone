@@ -25,4 +25,6 @@ public interface Collectable extends Renderable
      * @return  number of points earned from collecting collectable
      */
     int getPoints();
+
+
 }

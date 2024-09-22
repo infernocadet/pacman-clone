@@ -29,7 +29,7 @@ public class StaticFactory implements RenderableFactory{
         double height = sprite.getHeight();
         Vector2D position = new Vector2D(x * 16, y * 16);
         BoundingBox boundingBox = new BoundingBoxImpl(position, height, width);
-        Layer layer = Layer.FOREGROUND; // i dont know if it should be this
+        Layer layer = Layer.EFFECT; // i dont know if it should be this
         return new StaticEntityImpl(boundingBox, layer, sprite);
     }
 
