@@ -191,7 +191,7 @@ public class GhostImpl implements Ghost {
         this.currentDirection = startingKinematicState.getDirection();
 
         setGhostMode(GhostMode.SCATTER);
-        System.out.println(kinematicState.getDirection());
+        this.boundingBox.setTopLeft(startingKinematicState.getPosition());
     }
 
     @Override

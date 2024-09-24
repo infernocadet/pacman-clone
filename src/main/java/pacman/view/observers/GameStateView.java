@@ -9,11 +9,10 @@ import javafx.scene.text.Font;
 import javafx.util.Duration;
 import pacman.model.engine.GameState;
 
-import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameStateView implements GameObserver{
+public class GameStateView implements GameStateObserver{
     private final ObserverType type;
     private final Label label;
     private final Pane pane;
@@ -34,20 +33,12 @@ public class GameStateView implements GameObserver{
         pane.getChildren().add(label);
     }
 
-    @Override
-    public void updateScore(int score){
-     ;
-    }
-
-    @Override
-    public void updateLives(int lives){
-        ;
-    }
 
     public void updateGameState(GameState gameState){
         showLabel(gameState);
     }
 
+    @Override
     public ObserverType getType(){
         return this.type;
     }
@@ -84,7 +75,7 @@ public class GameStateView implements GameObserver{
                 timeline.play();
             }
             case VICTORY -> {
-                label.setLayoutX(128);
+                label.setLayoutX(158);
                 label.setText("YOU WIN");
                 label.setTextFill(Color.WHITE);
                 label.setVisible(true);;

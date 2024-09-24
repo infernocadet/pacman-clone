@@ -8,7 +8,7 @@ import pacman.model.engine.GameState;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LivesView implements GameObserver{
+public class LivesView implements LivesObserver{
     private final ObserverType type;
     private final Pane pane;
     private final List<ImageView> lifeIcons = new ArrayList<>();
@@ -19,11 +19,6 @@ public class LivesView implements GameObserver{
         this.pane = pane;
         this.lifeImage = lifeImage;
         addLifeImages(3);
-    }
-
-    @Override
-    public void updateScore(int score) {
-        ;
     }
 
     @Override
@@ -50,8 +45,4 @@ public class LivesView implements GameObserver{
         }
     }
 
-    @Override
-    public void updateGameState(GameState gameState){
-        ;
-    }
 }

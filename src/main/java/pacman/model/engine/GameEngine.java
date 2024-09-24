@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * The base interface for interacting with the Pac-Man model
  */
-public interface GameEngine extends GameSubject {
+public interface GameEngine {
 
     /**
      * Gets the list of renderables in the game
@@ -51,7 +51,6 @@ public interface GameEngine extends GameSubject {
      */
     void tick();
 
-
     Controllable getPlayer();
 
     KeyboardInputHandler getKeyboard();
@@ -60,7 +59,7 @@ public interface GameEngine extends GameSubject {
 
     void updateScore(int score);
 
-    void updateLives();
+    void updateLives(int numLives);
 
     void handleLevelComplete();
 

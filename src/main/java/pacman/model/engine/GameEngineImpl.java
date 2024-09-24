@@ -14,9 +14,7 @@ import pacman.view.Commands.LeftCommand;
 import pacman.view.Commands.RightCommand;
 import pacman.view.Commands.UpCommand;
 import pacman.view.keyboard.*;
-import pacman.view.observers.GameObserver;
-import pacman.view.observers.GameSubject;
-import pacman.view.observers.ObserverType;
+import pacman.view.observers.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
 /**
  * Implementation of GameEngine - responsible for coordinating the Pac-Man model
  */
-public class GameEngineImpl implements GameEngine {
+public class GameEngineImpl implements GameEngine, GameSubject {
 
     private Level currentLevel;
     private int numLevels;
@@ -33,7 +31,9 @@ public class GameEngineImpl implements GameEngine {
     private JSONArray levelConfigs;
     private KeyboardInputHandler keyboardInputHandler;
     private int gameScore;
-    private List<GameObserver> observers;
+    private List<ScoreObserver> scoreObservers;
+    private List<LivesObserver> livesObservers;
+    private List<GameStateObserver> gameStateObservers;
     private int livesLeft;
 
     private GameState currentState;
@@ -43,7 +43,9 @@ public class GameEngineImpl implements GameEngine {
     public GameEngineImpl(String configPath) {
         this.currentLevelNo = 0;
         this.gameScore = 0;
-        this.observers = new ArrayList<>();
+        this.scoreObservers = new ArrayList<>();
+        this.livesObservers = new ArrayList<>();
+        this.gameStateObservers = new ArrayList<>();
         this.currentState = GameState.READY;
         this.readyFrameCounter = 0;
 
@@ -132,7 +134,18 @@ public class GameEngineImpl implements GameEngine {
                 currentState = GameState.PLAYING;
                 notifyUpdateGameState(currentState);
             }
+
         } else if (currentState == GameState.PLAYING) {
+
+            int numLives = currentLevel.getNumLives();
+            if (numLives != livesLeft){
+                updateLives(numLives);
+            }
+
+            updateScore(currentLevel.getScore()); // increments the engines reference of score, sets level score to 0, and notifies
+            if (currentLevel.isLevelFinished()){
+                handleLevelComplete();
+            }
             currentLevel.tick();
         }
     }
@@ -153,6 +166,7 @@ public class GameEngineImpl implements GameEngine {
     @Override
     public void updateScore(int score){
         this.gameScore += score;
+        currentLevel.setScore(0);
         notifyUpdateScore();
     }
 
@@ -161,31 +175,47 @@ public class GameEngineImpl implements GameEngine {
     }
 
     @Override
-    public void addObserver(GameObserver observer){
-        this.observers.add(observer);
+    public void addLivesObserver(LivesObserver observer){
+        this.livesObservers.add(observer);
     }
 
     @Override
-    public void removeObserver(GameObserver observer){
-        this.observers.remove(observer);
+    public void addScoreObserver(ScoreObserver observer){
+        this.scoreObservers.add(observer);
+    }
+
+    @Override
+    public void addGameStateObserver(GameStateObserver observer){
+        this.gameStateObservers.add(observer);
+    }
+
+    @Override
+    public void removeScoreObserver(ScoreObserver observer){
+        this.scoreObservers.remove(observer);
+    }
+
+    @Override
+    public void removeLivesObserver(LivesObserver observer){
+        this.livesObservers.remove(observer);
+    }
+
+    @Override
+    public void removeGameStateObserver(GameStateObserver observer){
+        this.gameStateObservers.remove(observer);
     }
 
     @Override
     public void notifyUpdateScore(){
-        for (GameObserver observer : observers) {
-            if (observer.getType() == ObserverType.SCORE) {
-                observer.updateScore(gameScore);
-            }
+        for (ScoreObserver observer : scoreObservers) {
+            observer.updateScore(gameScore);
         }
     }
 
     @Override
-    public void updateLives() {
-        System.out.println("before hit: " + livesLeft);
-        livesLeft--;
-        System.out.println("after hit: " + livesLeft);
-        notifyUpdateLives();
-        if (livesLeft < 1){
+    public void updateLives(int numLives) {
+        notifyUpdateLives(numLives);
+        livesLeft = numLives;
+        if (numLives < 1){
             currentLevel.handleGameEnd(); // level is only responsible for making everything disappear. only game engine will initiate game ending
             notifyUpdateGameState(GameState.GAME_OVER);
         } else {
@@ -197,20 +227,16 @@ public class GameEngineImpl implements GameEngine {
     }
 
     @Override
-    public void notifyUpdateLives(){
-        for (GameObserver observer : observers) {
-            if (observer.getType() == ObserverType.LIVES){
-                observer.updateLives(livesLeft);
-            }
+    public void notifyUpdateLives(int numLives){
+        for (LivesObserver observer : livesObservers) {
+            observer.updateLives(numLives);
         }
     }
 
     @Override
     public void notifyUpdateGameState(GameState gameState){
-        for (GameObserver observer : observers){
-            if (observer.getType() == ObserverType.GAME_STATE) {
-                observer.updateGameState(gameState);
-            }
+        for (GameStateObserver observer : gameStateObservers){
+            observer.updateGameState(gameState);
         }
     }
 

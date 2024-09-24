@@ -96,10 +96,10 @@ public class LevelImpl implements Level {
 
     @Override
     public void tick() { // the bees knees right here
-        for (Ghost ghost : this.ghosts){
+        for (Ghost ghost : this.ghosts) {
             ghost.updatePlayerPosition(player.getPosition());
         }
-        if (tickCount == modeLengths.get(currentGhostMode) ) {
+        if (tickCount == modeLengths.get(currentGhostMode)) {
 
             // update ghost mode
             this.currentGhostMode = GhostMode.getNextGhostMode(currentGhostMode);
@@ -195,14 +195,21 @@ public class LevelImpl implements Level {
     }
 
     @Override
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    @Override
+    public int getScore() {return this.score;}
+
+    @Override
     public void handleLoseLife() {
-        System.out.println("level handling lost life");
-        model.updateLives();
+        setNumLives(numLives - 1); // sets number of lives to current lives - 1
     }
 
     @Override
     public void handleGameEnd() {
-        for (Ghost ghost : ghosts){
+        for (Ghost ghost : ghosts) {
             ghost.setLayer(Renderable.Layer.INVISIBLE);
         }
         player.setLayer(Renderable.Layer.INVISIBLE);
@@ -211,26 +218,18 @@ public class LevelImpl implements Level {
 
     @Override
     public void collect(Collectable collectable) {
-        model.updateScore(collectable.getPoints());
+        this.score += collectable.getPoints();
         this.collectables.remove(collectable);
-        if (isLevelFinished()){
-            handleLevelFinish();
-        }
 
     }
 
     @Override
-    public Controllable getControllable(){
+    public Controllable getControllable() {
         return this.player;
     }
 
     @Override
-    public boolean isGhost(Renderable renderable){
+    public boolean isGhost(Renderable renderable) {
         return this.ghosts.contains(renderable);
-    }
-
-    @Override
-    public void handleLevelFinish(){
-        model.handleLevelComplete();
     }
 }

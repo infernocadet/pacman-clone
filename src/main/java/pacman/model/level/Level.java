@@ -98,5 +98,9 @@ public interface Level {
      */
     boolean isGhost(Renderable renderable);
 
-    void handleLevelFinish();
+//    void handleLevelFinish();
+
+    void setScore(int score);
+
+    int getScore();
 }

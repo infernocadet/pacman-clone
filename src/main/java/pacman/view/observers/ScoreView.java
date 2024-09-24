@@ -3,7 +3,7 @@ package pacman.view.observers;
 import javafx.scene.control.Label;
 import pacman.model.engine.GameState;
 
-public class ScoreView implements GameObserver{
+public class ScoreView implements ScoreObserver{
     private final Label scoreLabel;
     private ObserverType type;
 
@@ -22,13 +22,4 @@ public class ScoreView implements GameObserver{
         return this.type;
     }
 
-    @Override
-    public void updateLives(int lives){
-        ;
-    }
-
-    @Override
-    public void updateGameState(GameState gameState){
-        ;
-    }
 }

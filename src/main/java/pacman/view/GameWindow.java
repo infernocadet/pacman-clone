@@ -18,10 +18,7 @@ import pacman.view.entity.EntityViewImpl;
 import pacman.view.keyboard.KeyboardInputHandler;
 
 import javafx.scene.control.Label;
-import pacman.view.observers.GameObserver;
-import pacman.view.observers.GameStateView;
-import pacman.view.observers.LivesView;
-import pacman.view.observers.ScoreView;
+import pacman.view.observers.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,12 +59,14 @@ public class GameWindow {
 
         pane.getChildren().add(scoreLabel);
 
-        GameObserver scoreView = new ScoreView(scoreLabel);
-        model.addObserver(scoreView);
-        GameObserver livesView = new LivesView(pane, lifeImage);
-        model.addObserver(livesView);
-        GameObserver gameStateView = new GameStateView(pane, font);
-        model.addObserver(gameStateView);
+        GameSubject gameModel = (GameSubject) model;
+
+        ScoreObserver scoreView = new ScoreView(scoreLabel);
+        gameModel.addScoreObserver(scoreView);
+        LivesObserver livesView = new LivesView(pane, lifeImage);
+        gameModel.addLivesObserver(livesView);
+        GameStateObserver gameStateView = new GameStateView(pane, font);
+        gameModel.addGameStateObserver(gameStateView);
 
 
 
