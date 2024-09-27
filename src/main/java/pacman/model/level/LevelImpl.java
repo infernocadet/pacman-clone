@@ -37,6 +37,7 @@ public class LevelImpl implements Level {
     private GhostMode currentGhostMode;
     private int score;
 
+
     public LevelImpl(JSONObject levelConfiguration,
                      Maze maze, GameEngineImpl model) {
         this.model = model;

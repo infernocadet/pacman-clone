@@ -37,6 +37,5 @@ public interface EntityView {
      * @return true, if entity view has been marked for deletion
      */
     boolean isMarkedForDelete();
-
-//    public Rectangle getBoundingBoxNode();
+    
 }

@@ -17,40 +17,30 @@ public class GhostImpl implements Ghost {
     private Layer layer;
     private final Image image;
     private final BoundingBox boundingBox;
-    private final Vector2D startingPosition;
     private final Vector2D targetCorner;
     private KinematicState kinematicState;
     private GhostMode ghostMode;
     private Vector2D targetLocation;
     private Direction currentDirection;
-    private Direction startingDirection;
-    private double initialSpeed;
     private Set<Direction> possibleDirections;
     private Vector2D playerPosition;
     private Map<GhostMode, Double> speeds;
-    private final int id;
     private KinematicState startingKinematicState;
+    private int ticksInCurrentDirection = 0;
 
-    public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, Direction currentDirection, int id) {
+    public GhostImpl(Image image, BoundingBox boundingBox, KinematicState kinematicState, GhostMode ghostMode, Vector2D targetCorner, Direction currentDirection) {
         this.layer = Layer.FOREGROUND;
         this.image = image;
         this.boundingBox = boundingBox;
         this.kinematicState = kinematicState;
         this.startingKinematicState = kinematicState.deepCopy();
-        this.startingPosition = kinematicState.getPosition();
         this.ghostMode = ghostMode;
         this.currentDirection = currentDirection;
-        this.startingDirection = currentDirection;
-        this.initialSpeed = kinematicState.getSpeed();
         this.possibleDirections = new HashSet<>();
         this.targetCorner = targetCorner;
         this.targetLocation = getTargetLocation();
-        this.id = id;
     }
 
-    public int getId(){
-        return this.id;
-    }
 
     @Override
     public void setSpeeds(Map<GhostMode, Double> speeds) {
@@ -72,6 +62,17 @@ public class GhostImpl implements Ghost {
     }
 
     private void updateDirection() {
+
+        if (ticksInCurrentDirection < 8){
+            if (this.currentDirection == null) {
+                this.currentDirection = selectDirection(possibleDirections);
+            } else {
+                ticksInCurrentDirection++;
+                return;
+            }
+        } else {
+            ticksInCurrentDirection = 0;
+        }
         // Ghosts update their target location when they reach an intersection
         if (this.currentDirection == null){
             this.currentDirection = selectDirection(possibleDirections);
@@ -212,10 +213,12 @@ public class GhostImpl implements Ghost {
         return new Vector2D(boundingBox.getMiddleX(), boundingBox.getMiddleY());
     }
 
+    @Override
     public void updatePlayerPosition(Vector2D playerPosition) {
         this.playerPosition = playerPosition;
     }
 
+    @Override
     public void setLayer(Layer layer){
         this.layer = layer;
     }

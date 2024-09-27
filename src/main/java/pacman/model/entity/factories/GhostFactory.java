@@ -15,7 +15,6 @@ public class GhostFactory implements RenderableFactory{
     private  List<Vector2D> targetCorners;
     private final int RESIZING_FACTOR = 16;
     private  int cornerIndex;
-    private int ghostId;
 
     public GhostFactory(){
         this.ghostImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/maze/ghosts/ghost.png")));
@@ -29,7 +28,6 @@ public class GhostFactory implements RenderableFactory{
 
         Collections.shuffle(this.targetCorners, random);
         this.cornerIndex = 0;
-        this.ghostId = 0;
     }
 
 
@@ -49,7 +47,7 @@ public class GhostFactory implements RenderableFactory{
                 .setDirection(direction)
                 .build();
         return new GhostImpl(this.ghostImage, boundingBox, kinematicState,
-                GhostMode.SCATTER, targetCorner, kinematicState.getDirection(), ghostId++);
+                GhostMode.SCATTER, targetCorner, kinematicState.getDirection());
     }
 
     private Direction calculateInitialDirection(Vector2D startPosition, Vector2D targetCorner) {

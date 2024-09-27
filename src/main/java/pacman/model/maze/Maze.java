@@ -9,6 +9,7 @@ import java.util.*;
 
 /**
  * Stores and manages the renderables for the Pac-Man game
+ * We are going to make this a singleton
  */
 public class Maze {
 
@@ -26,8 +27,6 @@ public class Maze {
         this.pellets = new ArrayList<>();
         this.isWall = new HashMap<>();
     }
-
-
 
     /**
      * Adds the renderable to maze

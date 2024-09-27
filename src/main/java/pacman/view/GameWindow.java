@@ -16,10 +16,8 @@ import pacman.view.background.StandardBackgroundDrawer;
 import pacman.view.entity.EntityView;
 import pacman.view.entity.EntityViewImpl;
 import pacman.view.keyboard.KeyboardInputHandler;
-
 import javafx.scene.control.Label;
 import pacman.view.observers.*;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +26,12 @@ import java.util.List;
 
 /**
  * Responsible for managing the Pac-Man Game View
+ * This will be the singleton class
  */
 public class GameWindow {
+
+    // singleton instance for class access
+    private static GameWindow instance;
 
     public static final File FONT_FILE = new File("src/main/resources/maze/PressStart2P-Regular.ttf");
 
@@ -39,7 +41,13 @@ public class GameWindow {
     private final List<EntityView> entityViews;
     private final List<ImageView> lifeViews;
 
-    public GameWindow(GameEngine model, int width, int height) {
+    /**
+     * Private Constructor for Singleton Gamewindow
+     * @param model the gameengine made in app.java
+     * @param width the width of the window
+     * @param height the height of the window
+     */
+    private GameWindow(GameEngine model, int width, int height) {
         this.model = model;
 
         pane = new Pane();
@@ -68,14 +76,18 @@ public class GameWindow {
         GameStateObserver gameStateView = new GameStateView(pane, font);
         gameModel.addGameStateObserver(gameStateView);
 
-
-
-
         KeyboardInputHandler keyboardInputHandler = this.model.getKeyboard();
         scene.setOnKeyPressed(keyboardInputHandler::handlePressed);
 
         BackgroundDrawer backgroundDrawer = new StandardBackgroundDrawer();
         backgroundDrawer.draw(model, pane);
+    }
+
+    public static synchronized GameWindow getInstance(GameEngine model, int width, int height){
+        if (instance == null){
+            instance = new GameWindow(model, width, height);
+        }
+        return instance;
     }
 
 

@@ -26,7 +26,6 @@ public interface Ghost extends DynamicEntity {
 
     Vector2D getTargetLocation();
 
-    int getId();
 
     void setLayer(Layer layer);
 }

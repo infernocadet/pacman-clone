@@ -62,6 +62,7 @@ public class Pacman implements Controllable {
         return this.kinematicState.getPreviousPosition();
     }
 
+    @Override
     public void update() {
         kinematicState.update();
         this.boundingBox.setTopLeft(this.kinematicState.getPosition());
@@ -87,6 +88,7 @@ public class Pacman implements Controllable {
         }
     }
 
+    @Override
     public void setQueuedDirection(Direction direction){
         this.queuedDirection = direction;
     }
@@ -116,7 +118,6 @@ public class Pacman implements Controllable {
 
     @Override
     public void left() {
-        System.out.println(getPosition());
         if (this.kinematicState.getDirection() != Direction.LEFT) {
             this.kinematicState.left();
             this.currentImage = images.get(PacmanVisual.LEFT);
@@ -213,6 +214,7 @@ public class Pacman implements Controllable {
         this.kinematicState.setPosition(new Vector2D(snappedX, snappedY));
     }
 
+    @Override
     public void setLayer(Layer layer){
         this.layer = layer;
     }

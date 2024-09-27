@@ -22,10 +22,7 @@ public class KeyboardInputHandler {
      */
     public KeyboardInputHandler(GameEngine model) {
         this.model = model; // game engine already assigns movement to controllable
-//        setCommand(KeyCode.LEFT, new LeftCommand(model));
-//        setCommand(KeyCode.RIGHT, new RightCommand(model));
-//        setCommand(KeyCode.UP, new UpCommand(model));
-//        setCommand(KeyCode.DOWN, new DownCommand(model));
+
     }
 
     public void setCommand(KeyCode keyCode, Command command){

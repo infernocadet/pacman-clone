@@ -4,7 +4,7 @@
   "levels": [
     {
       "levelNo": 1,
-      "pacmanSpeed": 3.0,
+      "pacmanSpeed": 6.0,
       "ghostSpeed":{
         "chase": 1.0,
         "scatter": 1.0
@@ -16,7 +16,7 @@
     },
     {
       "levelNo": 2,
-      "pacmanSpeed": 2.0,
+      "pacmanSpeed": 5.0,
       "ghostSpeed":{
         "chase": 1.2,
         "scatter": 1.3

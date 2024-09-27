@@ -13,15 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameStateView implements GameStateObserver{
-    private final ObserverType type;
     private final Label label;
     private final Pane pane;
     private final Font font;
-    private final Map<ObserverType, String> stateLabels = new HashMap<>();
 
 
     public GameStateView(Pane pane, Font font){
-        this.type = ObserverType.GAME_STATE;
         this.pane = pane;
         this.font = font;
 
@@ -33,15 +30,12 @@ public class GameStateView implements GameStateObserver{
         pane.getChildren().add(label);
     }
 
-
+    @Override
     public void updateGameState(GameState gameState){
         showLabel(gameState);
     }
 
-    @Override
-    public ObserverType getType(){
-        return this.type;
-    }
+
 
     /**
      * This determines the text inside the label, the colour of the text etc and then game over ends game

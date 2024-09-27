@@ -76,7 +76,6 @@ public class GameEngineImpl implements GameEngine, GameSubject {
     }
 
 
-
     @Override
     public List<Renderable> getRenderables() {
         return this.currentLevel.getRenderables();
@@ -112,17 +111,18 @@ public class GameEngineImpl implements GameEngine, GameSubject {
         JSONObject levelConfig = (JSONObject) levelConfigs.get(currentLevelNo);
         // reset renderables to starting state
         if (currentLevelNo != 0) { // if it is next level
-            currentLevel.getControllable().reset();
             this.currentLevel = new LevelImpl(levelConfig, maze, this);
-            this.currentLevel.getControllable().reset();
             maze.reset();
-            notifyUpdateGameState(currentState);
+
         } else { // if it is first level
             this.currentLevel = new LevelImpl(levelConfig, maze, this);
             this.currentLevel.getControllable().reset();
             loadCommands();
-            notifyUpdateGameState(currentState);
+
         }
+        readyFrameCounter = 0;
+        currentState = GameState.READY;
+        notifyUpdateGameState(currentState);
 
     }
 
@@ -145,8 +145,9 @@ public class GameEngineImpl implements GameEngine, GameSubject {
             updateScore(currentLevel.getScore()); // increments the engines reference of score, sets level score to 0, and notifies
             if (currentLevel.isLevelFinished()){
                 handleLevelComplete();
+            } else {
+                currentLevel.tick();
             }
-            currentLevel.tick();
         }
     }
 
@@ -168,10 +169,6 @@ public class GameEngineImpl implements GameEngine, GameSubject {
         this.gameScore += score;
         currentLevel.setScore(0);
         notifyUpdateScore();
-    }
-
-    public int getScore(){
-        return this.gameScore;
     }
 
     @Override
@@ -219,10 +216,12 @@ public class GameEngineImpl implements GameEngine, GameSubject {
             currentLevel.handleGameEnd(); // level is only responsible for making everything disappear. only game engine will initiate game ending
             notifyUpdateGameState(GameState.GAME_OVER);
         } else {
-            maze.resetEntities();
-            currentState = GameState.READY;
-            readyFrameCounter = 0;
-            notifyUpdateGameState(currentState);
+            if (currentState != GameState.READY) {  // Only reset if the game is not already in READY state
+                currentState = GameState.READY;
+                maze.resetEntities();
+                readyFrameCounter = 0;
+                notifyUpdateGameState(currentState);
+            }
         }
     }
 
@@ -243,12 +242,10 @@ public class GameEngineImpl implements GameEngine, GameSubject {
     @Override
     public void handleLevelComplete(){
         currentLevelNo++;
-        if (currentLevelNo == numLevels){
+        if (currentLevelNo >= numLevels){
             currentLevel.handleGameEnd();
             notifyUpdateGameState(GameState.VICTORY);
         } else {
-            currentState = GameState.READY;
-            readyFrameCounter = 0;
             startLevel();
         }
 
